@@ -1,11 +1,27 @@
+# Dentro de un fichero .gitignore podemos poner todos los nombres de los 
+# ficheros que queremos que sean ignorados por Git a la hora de versionar.
+# Serian como si no existieran para Git
+
+# Podemos poner nombre, extensiones o patrones de formato de ficheros
+# Más información en https://git-scm.com/docs/gitignore
+
+# En este .gitignore vamos a poner los ficheros tipicos que no vamos a versionar
+# dentro de un proyecto de Eclipse
+
+# Sacados de:
+# https://gist.github.com/Avinashachu007/58450a38a3a77d7c9923a55023f470f4
+# Tambien se puede consultar la siguiente pagina
+# https://github.com/github/gitignore/blob/master/Global/Eclipse.gitignore
+
 /target/
 !.mvn/wrapper/maven-wrapper.jar
 
 ### STS ###
 .apt_generated
-.classpath
+# Mejor comentar esta linea tambien para que se puede abrir los proyectos en eclipse
+# Sin errores
+# .classpath
 .factorypath
-.project
 .settings
 .springBeans
 .sts4-cache
@@ -73,10 +89,9 @@ local.properties
 
 ### Eclipse Patch ###
 # Eclipse Core
-.project
-
-# JDT-specific (Eclipse Java Development Tools)
-.classpath
+# Descomentamos los project para que los reconozca eclipse como proyectos
+# y poder importarlos facilmente al IDE
+# .project
 
 # Annotation Processing
 .apt_generated
@@ -119,6 +134,12 @@ local.properties
 *.zip
 *.tar.gz
 *.rar
+# Decimos que evite no sincronizar las librerias que usamos en nuestros proyectos
+# para que funcionen
+# librerias proyectos normales
+!*/lib/*.jar
+# librerias proyectos web
+!*/WebContent/WEB-INF/lib/*.jar
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
@@ -162,3 +183,20 @@ $RECYCLE.BIN/
 
 
 # End of https://www.gitignore.io/api/git,java,maven,eclipse,windows
+
+# Posibles Archivos Propios
+#/libraries/
+#/Servers/
+sync.ffs_db
+© 2022 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Docs
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
