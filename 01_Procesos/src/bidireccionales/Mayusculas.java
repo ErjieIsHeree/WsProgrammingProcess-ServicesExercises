@@ -1,4 +1,4 @@
-package _02_procesos;
+package bidireccionales;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
