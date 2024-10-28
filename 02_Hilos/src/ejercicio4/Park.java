@@ -5,120 +5,110 @@ import java.util.Random;
 import java.util.concurrent.Semaphore;
 
 public class Park {
-	private static int[] arrayParking = new int[6];
-	private final static Object MONITOR = new Object();
-	private static int turnoActual = 1;
+	
+	//Capacidad de garage
+	private static int espacioParking = 10;
+	//Cantidad de coches
+	private static int cantidadCoches = 20;
+	
+	private static int[] arrayParking = new int[espacioParking];
 	
 	public static void main(String[] args) {
-		Parking parking = new Parking(6);
-		Coche c1 = new Coche(1, 1, parking);
-		Coche c2 = new Coche(2, 2, parking);
-		Coche c3 = new Coche(3, 3, parking);
-		Coche c4 = new Coche(4, 4, parking);
-		Coche c5 = new Coche(5, 5, parking);
-		Coche c6 = new Coche(6, 6, parking);
-		Coche c7 = new Coche(7, 7, parking);
-		Coche c8 = new Coche(8, 8, parking);
-		Coche c9 = new Coche(9, 9, parking);
-		Coche c10 = new Coche(10, 10, parking);
-		
-		c1.start();
-		c2.start();
-		c3.start();
-		c4.start();
-		c5.start();
-		c6.start();
-		c7.start();
-		c8.start();
-		c9.start();
-		c10.start();
-		
+		Parking parking = new Parking(espacioParking);
+		ArrayList<Coche> listaCoches = new ArrayList<Coche>();
+		for (int i = 1; i <= cantidadCoches; i++) {
+			listaCoches.add(new Coche(i, parking));
+		}
+		for (int i = 0; i < cantidadCoches; i++) {
+			listaCoches.get(i).start();
+		}
 	}
 	
 	public static class Parking{
 		private Semaphore semaforo;
 		
-		public Parking(int espaciosLibres) {
-			this.semaforo = new Semaphore(espaciosLibres);
+		public Parking(int espaciosGarage) {
+			this.semaforo = new Semaphore(espaciosGarage);
 		}
 		
-		public void aparcar(int coche) {
+		public void entradaSalidaDe(int coche) {
 			Random rd = new Random();
-			int posicionCoche = 0;
+			int posicionCocheEnArray = 0;
+			
 			try {
-				semaforo.acquire();
-				posicionCoche = entrar(coche, rd);
-				System.out.println("ENTRADA: Coche " + coche + " aparca en " + posicionCoche);
+				posicionCocheEnArray = entrar(coche);
+				System.out.println("---------------------------------------------------------\r\n"
+						+ "ENTRADA: Coche " + coche + " aparca en " + (1 + posicionCocheEnArray) + "\r\n"
+						+ "Plazas libre: " + semaforo.availablePermits() + "\r\n"
+						+ visualParking());
+				visualParking();
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
 				try {
-					Thread.sleep(rd.nextInt(10000)+3000);
-				} catch (InterruptedException e) {
+					Thread.sleep(rd.nextInt(300000)+150000);
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				salir(posicionCoche);
-				semaforo.release();
-				System.out.println("SALIDA: Coche " + coche + " saliendo.");
-				int plazasLibres = 0;
-				for (int vacio : arrayParking) {
-					if (vacio == 0) {
-						plazasLibres++;
-					}
-				}
-				System.out.println("Plazas libres: " + plazasLibres);
+				salir(posicionCocheEnArray);
+				System.out.println("---------------------------------------------------------\r\n"
+						+ "SALIDA: Coche " + coche + " saliendo.\r\n"
+						+ "Plazas libres: " + semaforo.availablePermits());
 			}
 		}
 		
-		public int entrar(int coche, Random rd) {
-			ArrayList<Integer> listaPlazaLibre = new ArrayList<Integer>();
-			for (int i = 0; i < arrayParking.length; i++) {
+		/**
+		 * El siguiente metodo pide un permiso al semaforo, cuando reciba el permiso
+		 * @param coche numero del coche a introducir en el array
+		 * @return posicionArray del coche en un valor entero
+		 */
+		public int entrar(int coche) {
+			try {
+				semaforo.acquire();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			int plazaLibre = 0;
+			for (int i = arrayParking.length - 1; i >= 0; i--) {
 				if (arrayParking[i] == 0) {
-					listaPlazaLibre.add(i);
+					plazaLibre = i;
 				}
 			}
-			int plaza = listaPlazaLibre.get(rd.nextInt(listaPlazaLibre.size() - 1));
-			arrayParking[plaza] = coche;
-			return plaza;
+			arrayParking[plazaLibre] = coche;
+			return plazaLibre;
 		}
 		
+		/**
+		 * El siguiente metodo saca el coche de la plaza del parking introducido y
+		 * libera un permiso del semaforo.
+		 * @param posicionCoche la posicion del array en la que se encuentra el coche
+		 */
 		public void salir(int posicionCoche) {
 			arrayParking[posicionCoche] = 0;
+			semaforo.release();
 		}
 		
 		public String visualParking() {
-			return ("[" + arrayParking[0] + "] " + "[" + arrayParking[1] + "] " + "[" + arrayParking[2] + "] " + "[" + arrayParking[3] + "] "
-					+ "[" + arrayParking[4] + "] " + "[" + arrayParking[5] + "] " + "[" + arrayParking[6] + "]");
+			String plazas = "";
+			for (int i = 0; i < arrayParking.length; i++) {
+				plazas += i + 1 + "[" + arrayParking[i] + "] ";
+			}
+			return plazas;
 		}
 	}
 	
 	public static class Coche extends Thread{
 		private int coche;
-		private int turno;
 		private Parking parking;
 		
-		public int getCoche() {
-			return coche;
-		}
-		
-		public Coche(int coche, int turno, Parking parking) {
+		public Coche(int coche, Parking parking) {
 			this.coche = coche;
-			this.turno = turno;
 			this.parking = parking;
 		}
 		
 		public void run() {
-			synchronized (MONITOR) {
-				while (turnoActual != turno) {
-					try {
-						MONITOR.wait();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					parking.aparcar(coche);
-					MONITOR.notifyAll();
-					turnoActual++;
-				}
+			while (true) {
+				parking.entradaSalidaDe(coche);
 			}
 		}
 		
