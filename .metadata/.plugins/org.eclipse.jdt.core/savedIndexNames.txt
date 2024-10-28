@@ -1,7 +1,4 @@
 INDEX VERSION 1.134+C:\Users\Erjie\Desktop\DAM\02_SecondYear\2.ProgramaciónSyP\2.Ejercicios\WsEjercicios\.metadata\.plugins\org.eclipse.jdt.core
 953416031.index
-687394091.index
 1865797976.index
 828471998.index
-1905210691.index
-3413270776.index
