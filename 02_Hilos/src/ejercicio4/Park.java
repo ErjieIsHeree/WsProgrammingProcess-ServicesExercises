@@ -7,10 +7,11 @@ import java.util.concurrent.Semaphore;
 public class Park {
 	
 	//Capacidad de garage
-	private static int espacioParking = 10;
+	private static int espacioParking = 20;
 	//Cantidad de coches
-	private static int cantidadCoches = 20;
-	
+	private static int cantidadCoches = 40;
+	private int disponibles = 20;
+	static final Object MONITOR = new Object();
 	private static int[] arrayParking = new int[espacioParking];
 	
 	public static void main(String[] args) {
@@ -36,24 +37,28 @@ public class Park {
 			int posicionCocheEnArray = 0;
 			
 			try {
-				posicionCocheEnArray = entrar(coche);
-				System.out.println("---------------------------------------------------------\r\n"
-						+ "ENTRADA: Coche " + coche + " aparca en " + (1 + posicionCocheEnArray) + "\r\n"
-						+ "Plazas libre: " + semaforo.availablePermits() + "\r\n"
-						+ visualParking());
-				visualParking();
+				synchronized (MONITOR) {
+					posicionCocheEnArray = entrar(coche);
+					System.out.println("---------------------------------------------------------\r\n"
+							+ "ENTRADA: Coche " + coche + " aparca en " + (1 + posicionCocheEnArray) + "\r\n"
+							+ "Plazas libre: " + semaforo.availablePermits() + "\r\n"
+							+ visualParking());
+					visualParking();
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
 				try {
-					Thread.sleep(rd.nextInt(300000)+150000);
+					Thread.sleep(rd.nextInt(30000)+10000);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				salir(posicionCocheEnArray);
-				System.out.println("---------------------------------------------------------\r\n"
-						+ "SALIDA: Coche " + coche + " saliendo.\r\n"
-						+ "Plazas libres: " + semaforo.availablePermits());
+				synchronized (MONITOR) {
+					salir(posicionCocheEnArray);
+					System.out.println("---------------------------------------------------------\r\n"
+							+ "SALIDA: Coche " + coche + " saliendo.\r\n"
+							+ "Plazas libres: " + semaforo.availablePermits());
+				}
 			}
 		}
 		
@@ -98,17 +103,17 @@ public class Park {
 	}
 	
 	public static class Coche extends Thread{
-		private int coche;
+		private int idCoche;
 		private Parking parking;
 		
 		public Coche(int coche, Parking parking) {
-			this.coche = coche;
+			this.idCoche = coche;
 			this.parking = parking;
 		}
 		
 		public void run() {
 			while (true) {
-				parking.entradaSalidaDe(coche);
+				parking.entradaSalidaDe(idCoche);
 			}
 		}
 		
