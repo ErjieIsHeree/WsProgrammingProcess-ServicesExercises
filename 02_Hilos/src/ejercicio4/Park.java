@@ -6,9 +6,9 @@ import java.util.concurrent.Semaphore;
 public class Park {
 	
 	//Capacidad de garage
-	private static int espacioParking = 20;
+	private static int espacioParking = 5;
 	//Cantidad de coches
-	private static int cantidadCoches = 40;
+	private static int cantidadCoches = 10;
 	
 	private static Random rd = new Random();
 	private static final Object MONITOR = new Object();
@@ -36,6 +36,7 @@ public class Park {
 					System.out.println("ENTRADA: Coche " + coche + " aparca en " + posicionCoche + ".");
 					System.out.println("Plazas libre: " + plazasLibres());
 					visualParking();
+					System.out.println("");
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -49,6 +50,8 @@ public class Park {
 					sale(posicionCoche);
 					System.out.println("SALIDA: Coche " + coche + " saliendo.");
 					System.out.println("Plazas libre: " + plazasLibres());
+					System.out.println("");
+					semaforo.release();
 				}
 			}
 			
