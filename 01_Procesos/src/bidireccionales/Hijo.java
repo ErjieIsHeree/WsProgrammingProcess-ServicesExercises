@@ -8,14 +8,13 @@ import java.io.OutputStreamWriter;
 public class Hijo {
 	
 	public static void main(String[] args) {
-		
 		BufferedReader lector = null;
 		BufferedWriter escritor = null;
 		
+		lector = new BufferedReader(new InputStreamReader(System.in));
+		escritor = new BufferedWriter(new OutputStreamWriter(System.out));
+		
 		try {
-			
-			lector = new BufferedReader(new InputStreamReader(System.in));
-			escritor = new BufferedWriter(new OutputStreamWriter(System.out));
 			
 			String linea = "";
 			while ((linea = lector.readLine()) != null) {

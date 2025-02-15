@@ -15,7 +15,7 @@ public class Mayusculas {
 		BufferedWriter bw_hijo = null;
 		String classpath = System.getProperty("java.class.path");
 		try {
-			procesoHijo = new ProcessBuilder("java", "-cp", classpath, "_02_procesos.Hijo").start();
+			procesoHijo = new ProcessBuilder("java", "-cp", classpath, "bidireccionales.Hijo").start();
 			
 			//Para introducir desde el teclado
 			br_teclado = new BufferedReader(new InputStreamReader(System.in));
@@ -28,7 +28,7 @@ public class Mayusculas {
 			String line = "";
 			String readHijo = "";
 			System.out.println("Introduzca cadenas, para salir introduzca \"salir\"");
-			while (!(line = br_teclado.readLine()).equalsIgnoreCase("salir")) {
+			while (!(line = br_teclado.readLine()).equalsIgnoreCase("")) {
 				//Se escribe en el hijo
 				bw_hijo.write(line + "\n");
 				bw_hijo.flush();
